@@ -38,6 +38,10 @@ app.MapPost("/creditline/payoff-min/", ([FromBody]CreditLine creditline) => {
     return CreditCardPaymentHelper.CalculateMonthsToPayOff(creditline);
 });
 
+app.MapPost("/creditline/payoff-snowball/", ([FromBody]List<CreditLine> creditlines, decimal extraPayment) => {
+    return CreditCardPaymentHelper.CalculateDebtSnowballPayoff(creditlines, extraPayment);
+});
+
 app.MapPost("/creditline", async (CreditLine creditline, CreditLineDb db) =>
 {
     db.CreditLines.Add(creditline);
