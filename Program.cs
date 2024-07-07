@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NSwag.AspNetCore;
 
@@ -32,6 +33,10 @@ app.MapGet("/creditline/{id}", async (int id, CreditLineDb db) =>
         is CreditLine creditline
             ? Results.Ok(creditline)
             : Results.NotFound());
+
+app.MapPost("/creditline/payoff-min/", ([FromBody]CreditLine creditline) => {
+    return CreditCardPaymentHelper.CalculateMonthsToPayOff(creditline);
+});
 
 app.MapPost("/creditline", async (CreditLine creditline, CreditLineDb db) =>
 {
