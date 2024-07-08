@@ -1,12 +1,12 @@
 public class CreditCardPaymentHelper
 {
-    public static int CalculateMonthsToPayOff(double balance, double interestRate, double monthlyPayment)
+    public static PaymentInfo CalculateMonthsToPayOff(double balance, double interestRate, double monthlyPayment, double amountPaidInInterest)
     {
         int months = 0;
-
         while (balance > 0)
         {
             var currBalance = balance;
+            amountPaidInInterest += balance * interestRate / 12;
             balance += balance * interestRate / 12;
             balance -= monthlyPayment;
             // would not be able to pay off the balance at this rate and min monthly
@@ -18,19 +18,24 @@ public class CreditCardPaymentHelper
             if (balance <= 0)
                 break;
         }
-
-        return months;
+        
+        return new PaymentInfo {
+            AmountPaidInInterest = amountPaidInInterest,
+            Months = months,
+        };
     }
 
     public static List<PaymentPlan> CalculateMinPaymentPayoff(List<CreditLine> creditLines) {
         List<PaymentPlan> payoffResults = new List<PaymentPlan>();
         foreach (var creditLine in creditLines) {
-            int monthsToPayOff = CalculateMonthsToPayOff(creditLine.Balance, creditLine.InterestRate, creditLine.MinMonthlyPayment);
+            double amountPaidInInterest = 0;
+            PaymentInfo paymentInfo = CalculateMonthsToPayOff(creditLine.Balance, creditLine.InterestRate, creditLine.MinMonthlyPayment, amountPaidInInterest);
             payoffResults.Add(new PaymentPlan
                 {
                     Id = creditLine.Id,
                     Name = creditLine.Name ?? "",
-                    MonthsToPayOff = monthsToPayOff
+                    MonthsToPayOff = paymentInfo.Months,
+                    AmountPaidInInterest = paymentInfo.AmountPaidInInterest,
                 });
         };
         return payoffResults;
@@ -50,14 +55,16 @@ public class CreditCardPaymentHelper
         // Iterate over each credit line and calculate months to pay off
         foreach (var creditLine in sortedCreditLines)
         {
-            int monthsToPayOff = CalculateMonthsToPayOff(creditLine.Balance, creditLine.InterestRate, creditLine.MinMonthlyPayment + totalExtraPayment);
+            double amountPaidInInterest = 0;
+            PaymentInfo paymentInfo = CalculateMonthsToPayOff(creditLine.Balance, creditLine.InterestRate, creditLine.MinMonthlyPayment + totalExtraPayment, amountPaidInInterest);
             totalExtraPayment += creditLine.MinMonthlyPayment;
 
             payoffResults.Add(new PaymentPlan
             {
                 Id = creditLine.Id,
                 Name = creditLine.Name ?? "",
-                MonthsToPayOff = monthsToPayOff
+                MonthsToPayOff = paymentInfo.Months,
+                AmountPaidInInterest = paymentInfo.AmountPaidInInterest,
             });
         }
 

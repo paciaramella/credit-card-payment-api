@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using NSwag.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<CreditLineDb>(opt => opt.UseInMemoryDatabase("CreditLine"));
+builder.Services.AddDbContext<CreditLineDbContext>(opt => opt.UseInMemoryDatabase("CreditLine"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument(config =>
@@ -25,10 +25,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.MapGet("/creditline", async (CreditLineDb db) =>
+app.MapGet("/creditline", async (CreditLineDbContext db) =>
     await db.CreditLines.ToListAsync());
 
-app.MapGet("/creditline/{id}", async (int id, CreditLineDb db) =>
+app.MapGet("/creditline/{id}", async (int id, CreditLineDbContext db) =>
     await db.CreditLines.FindAsync(id)
         is CreditLine creditline
             ? Results.Ok(creditline)
@@ -42,7 +42,7 @@ app.MapPost("/creditline/payoff-snowball/", ([FromBody]SnowBallPayoffRequest req
     return CreditCardPaymentHelper.CalculateDebtSnowballPayoff(request.CreditLines, request.ExtraPayment);
 });
 
-app.MapPost("/creditline", async (CreditLine creditline, CreditLineDb db) =>
+app.MapPost("/creditline", async (CreditLine creditline, CreditLineDbContext db) =>
 {
     db.CreditLines.Add(creditline);
     await db.SaveChangesAsync();
@@ -50,7 +50,7 @@ app.MapPost("/creditline", async (CreditLine creditline, CreditLineDb db) =>
     return Results.Created($"/creditline/{creditline.Id}", creditline);
 });
 
-app.MapPut("/creditline/{id}", async (int id, CreditLine inputCreditLine, CreditLineDb db) =>
+app.MapPut("/creditline/{id}", async (int id, CreditLine inputCreditLine, CreditLineDbContext db) =>
 {
     var creditline = await db.CreditLines.FindAsync(id);
 
@@ -62,7 +62,7 @@ app.MapPut("/creditline/{id}", async (int id, CreditLine inputCreditLine, Credit
     return Results.NoContent();
 });
 
-app.MapDelete("/creditline/{id}", async (int id, CreditLineDb db) =>
+app.MapDelete("/creditline/{id}", async (int id, CreditLineDbContext db) =>
 {
     if (await db.CreditLines.FindAsync(id) is CreditLine creditline)
     {
