@@ -1,11 +1,13 @@
 public readonly struct PaymentPlan
 {
-    public PaymentPlan(String Name, int MonthsToPayOff)
-    {
+    public PaymentPlan(int Id, string Name, int MonthsToPayOff)
+    {   
+        this.Id = Id;
         this.Name = Name;
         this.MonthsToPayOff = MonthsToPayOff;
     }
 
-    public String Name { get; init; }
+    public int Id { get; init; }
+    public string Name { get; init; }
     public int MonthsToPayOff { get; init; }
 }

@@ -34,11 +34,11 @@ app.MapGet("/creditline/{id}", async (int id, CreditLineDb db) =>
             ? Results.Ok(creditline)
             : Results.NotFound());
 
-app.MapPost("/creditline/payoff-min/", ([FromBody]CreditLine creditline) => {
-    return CreditCardPaymentHelper.CalculateMonthsToPayOff(creditline.Balance, creditline.InterestRate, creditline.MinMonthlyPayment);
+app.MapPost("/creditline/payoff-min/", ([FromBody]MinPayoffRequest minPayoffRequest) => {
+    return CreditCardPaymentHelper.CalculateMinPaymentPayoff(minPayoffRequest.CreditLines);
 });
 
-app.MapPost("/creditline/payoff-snowball/", ([FromBody]CreditLineRequest request) => {
+app.MapPost("/creditline/payoff-snowball/", ([FromBody]SnowBallPayoffRequest request) => {
     return CreditCardPaymentHelper.CalculateDebtSnowballPayoff(request.CreditLines, request.ExtraPayment);
 });
 

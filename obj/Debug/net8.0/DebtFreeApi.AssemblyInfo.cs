@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DebtFreeApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a6e5d24389fff36faae579137a1a815c3590f671")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3881cffc6e75aa68bbc8c9f49250a83b3e634832")]
 [assembly: System.Reflection.AssemblyProductAttribute("DebtFreeApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DebtFreeApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

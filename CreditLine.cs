@@ -7,7 +7,10 @@ public class CreditLine
     public double MinMonthlyPayment { get; set; }
 }
 
-public class CreditLineRequest
+public class MinPayoffRequest {
+    public required List<CreditLine> CreditLines { get; set; }
+}
+public class SnowBallPayoffRequest
 {
     public required List<CreditLine> CreditLines { get; set; }
     public double ExtraPayment { get; set; }
