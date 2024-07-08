@@ -28,19 +28,24 @@ public class CreditCardPaymentHelper
 
         return months;
     }
-    public static int CalculateDebtSnowballPayoff(List<CreditLine> creditLines, decimal extraPayment)
+    public static List<PaymentPlan> CalculateDebtSnowballPayoff(List<CreditLine> creditLines, decimal extraPayment)
     {
+        List<PaymentPlan> payments = [];
         creditLines = creditLines.OrderBy(cl => cl.Balance).ToList();
-        int totalMonths = 0;
         decimal totalPayment = 0;
         
         while (creditLines.Any(cl => cl.Balance > 0))
         {
-            totalMonths++;
             decimal monthPayment = 0;
             foreach (var creditLine in creditLines)
             {
-                if (creditLine.Balance <= 0) continue;
+                int totalMonths = 0;
+                if (creditLine.Balance <= 0) {
+                    string creditLineName = creditLine.Name ?? "";
+                    var paymentPlan = new PaymentPlan(creditLineName, totalMonths);
+                    payments.Add(paymentPlan);
+                    continue;
+                }
 
                 decimal monthlyInterestRate = creditLine.InterestRate / 12;
                 decimal interestForMonth = creditLine.Balance * monthlyInterestRate;
@@ -58,9 +63,10 @@ public class CreditCardPaymentHelper
                 }
                 creditLine.Balance -= payment;
                 monthPayment += payment;
+                totalMonths++;
             }
         }
 
-        return totalMonths;
+        return payments;
     }
 }
